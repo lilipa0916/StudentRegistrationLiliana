@@ -1,12 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using AutoMapper;
-using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -24,6 +18,12 @@ namespace Application.Services
         public async Task<IEnumerable<MateriaDto>> GetAllAsync()
         {
             var materias = await _repo.GetAllAsync();
+            return _mapper.Map<IEnumerable<MateriaDto>>(materias);
+        }
+
+        public async Task<IEnumerable<MateriaDto>> GetByIdsAsync(List<int> materiaIds)
+        {
+            var materias = await _repo.GetByIdsAsync(materiaIds);
             return _mapper.Map<IEnumerable<MateriaDto>>(materias);
         }
     }

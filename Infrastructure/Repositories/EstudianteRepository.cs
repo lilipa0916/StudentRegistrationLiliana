@@ -4,12 +4,7 @@ using Dapper;
 using Domain.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -48,7 +43,6 @@ namespace Infrastructure.Repositories
                 await conn.ExecuteAsync("sp_AddMateriaToEstudiante", new { EstudianteId = id, MateriaId = m },
                     commandType: CommandType.StoredProcedure);
             }
-
             return id;
         }
 
@@ -79,6 +73,34 @@ namespace Infrastructure.Repositories
 
             return agrupado;
         }
+        public async Task<bool> UpdateAsync(Estudiante dto, List<int> MateriaIds)
+        {
+            using var conn = new SqlConnection(_connectionString);
 
+            // Transacción para manejar la actualización y la relación de materias
+            using (var transaction = conn.BeginTransaction())
+            {
+                try
+                {
+                    // Llamada al SP para actualizar el estudiante
+                    await conn.ExecuteAsync("sp_UpdateEstudiante",
+                        new
+                        {
+                            Id = dto.Id,
+                            Nombre = dto.Nombre,
+                            Documento = dto.Documento,
+                            MateriaIds = string.Join(",", MateriaIds)  
+                        }, commandType: CommandType.StoredProcedure, transaction: transaction);
+
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
+            }
+        }
     }
 }

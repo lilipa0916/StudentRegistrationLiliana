@@ -1,12 +1,6 @@
 ﻿using Application.DTOs;
 using AutoMapper;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Mappings
 {
@@ -18,6 +12,17 @@ namespace Application.Mappings
             CreateMap<EstudianteCreateDto, Estudiante>();
             CreateMap<Materia, MateriaDto>();
             CreateMap<Profesor, ProfesorDto>();
+
+            CreateMap<EstudianteDto, Estudiante>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Nombre, opt => opt.MapFrom(src => src.Nombre))
+                .ForMember(dest => dest.Documento, opt => opt.MapFrom(src => src.Documento));
+
+            CreateMap<EstudianteCreateDto, Estudiante>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Nombre, opt => opt.MapFrom(src => src.Nombre))
+                .ForMember(dest => dest.Documento, opt => opt.MapFrom(src => src.Documento));
+
         }
 
     }

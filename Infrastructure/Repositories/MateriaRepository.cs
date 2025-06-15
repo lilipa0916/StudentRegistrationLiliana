@@ -1,10 +1,9 @@
-﻿using Application.Interfaces;
-using Domain.Entities;
+﻿using Application.DTOs;
+using Application.Interfaces;
 using Dapper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Data;
-using Application.DTOs;
 
 namespace Infrastructure.Repositories
 {
@@ -17,10 +16,10 @@ namespace Infrastructure.Repositories
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public async Task<IEnumerable<Materia>> GetAllAsync()
+        public async Task<IEnumerable<MateriaDto>> GetAllAsync()
         {
             using var conn = new SqlConnection(_connectionString);
-            var result = await conn.QueryAsync<Materia>(
+            var result = await conn.QueryAsync<MateriaDto>(
                 "sp_GetAllMaterias",
                 commandType: CommandType.StoredProcedure
             );
@@ -28,15 +27,17 @@ namespace Infrastructure.Repositories
             return result;
         }
 
-        public async Task<IEnumerable<Materia>> GetByIdsAsync(IEnumerable<int> ids)
+        public async Task<IEnumerable<MateriaDto>> GetByIdsAsync(IEnumerable<int> ids)
         {
             using var conn = new SqlConnection(_connectionString);
 
             var idsString = string.Join(",", ids);
 
-            var result = await conn.QueryAsync<Materia>(
+            var result = await conn.QueryAsync<MateriaDto>(
                 "sp_GetMateriasByIds",
-                new { Ids = idsString },
+                new { Ids = idsString,
+                        
+                        },
                 commandType: CommandType.StoredProcedure
             );
 
