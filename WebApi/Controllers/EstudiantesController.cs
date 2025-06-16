@@ -78,6 +78,19 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] EstudianteCreateDto dto)
         {
+            if (dto.MateriaIds.Count != 3)
+            {
+                return BadRequest("Un estudiante solo puede seleccionar 3 materias.");
+            }
+
+            var materias = await _serviceMat.GetByIdsAsync(dto.MateriaIds);
+            var profesores = materias.GroupBy(m => m.ProfesorId);
+            if (profesores.Any(g => g.Count() > 1))
+            {
+                return BadRequest("No puedes seleccionar 2 materias con el mismo profesor.");
+            }
+
+
             if (id != dto.Id)
             {
                 return BadRequest("El ID del estudiante no coincide.");
