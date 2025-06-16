@@ -42,6 +42,14 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenLocalhost(7299, listenOptions =>
+    {
+        listenOptions.UseHttps();
+    });
+});
+
 var app = builder.Build();
 
 // Middleware de desarrollo
